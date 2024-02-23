@@ -18,13 +18,20 @@
 
 // Nuestra estructura debe aceptar tant numeros como letras por eso la mejor opcion es utilizar Generics
 use std::collections::HashMap;
-pub struct Graph<VId, E=(), V= ()> {
+use std::hash::Hash;
+
+#[derive(Debug)]
+pub struct Graph<VId, E= (), V= ()> {
     vertices: HashMap<VId,V>,
     adjacency: HashMap<VId, Vec<(VId, E)>>,
 
 }
 
-impl<VId, E, V> Graph<VId, E,V> where VId: Eq + Hash, V: Hash, {
+impl<VId, E, V> Graph<VId, E,V>
+where 
+    VId: Eq + Hash,
+    V: Hash
+{
         pub fn new() -> Graph<VId, E, V>{
             Graph {
                 vertices: HashMap::new(), adjacency:  HashMap::new(),
@@ -42,7 +49,22 @@ impl<VId, E, V> Graph<VId, E,V> where VId: Eq + Hash, V: Hash, {
 
     }
 
+#[derive(Debug)]
+enum Direction {
+    Left,
+    Right,
+    Up,
+    Down
+}
+
 
 fn main() {
-    println!("Hello, world!");
+    let mut graph: Graph<&str, Direction> = Graph::new();
+    graph.push_vertex("A", ());
+    graph.push_vertex("E", ());
+    graph.push_vertex("B", ());
+    graph.push_vertex("D", ());
+    graph.push_edge("A", "B", Direction::Right );
+    graph.push_edge("B", "E", Direction::Down );
+    println!("Graph: {:?}", graph);
 }
