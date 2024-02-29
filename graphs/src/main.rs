@@ -29,8 +29,9 @@ pub struct Graph<VId, E= (), V= ()> {
 
 impl<VId, E, V> Graph<VId, E,V>
 where 
-    VId: Eq + Hash,
-    V: Hash
+    VId: Eq + Hash + Clone,
+    V: Hash,
+    E: Clone,
 {
         pub fn new() -> Graph<VId, E, V>{
             Graph {
@@ -46,10 +47,14 @@ where
             let adjacent_to_from = self.adjacency.entry(from).or_default();
             adjacent_to_from.push((to, edge));
         }
+        pub fn push_undirected_edge(self: &mut Self, from: VId, to: VId, edge: E){
+            self.push_edge(from.clone(), to.clone(), edge.clone());
+            self.push_edge(to, from, edge);
+        }
 
     }
 
-#[derive(Debug)]
+#[derive(Debug,Clone)]
 enum Direction {
     Left,
     Right,
@@ -59,12 +64,12 @@ enum Direction {
 
 
 fn main() {
-    let mut graph: Graph<&str, Direction> = Graph::new();
+    let mut graph = Graph::new();
     graph.push_vertex("A", ());
     graph.push_vertex("E", ());
     graph.push_vertex("B", ());
     graph.push_vertex("D", ());
     graph.push_edge("A", "B", Direction::Right );
-    graph.push_edge("B", "E", Direction::Down );
+    graph.push_undirected_edge("B", "E", Direction::Down );
     println!("Graph: {:?}", graph);
 }
